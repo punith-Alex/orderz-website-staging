@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+  <div class="container">
+    <nav class="breadcrumb"><a href="{{ root }}">Home</a>{% for c in crumbs %} / {% if c.url %}<a href="{{ root }}{{ c.url }}">{{ c.label }}</a>{% else %}<span>{{ c.label }}</span>{% endif %}{% endfor %}</nav>
+    <span class="eyebrow">{{ eyebrow }}</span>
+    <h1>{{ page.h1 }}</h1>
+    {% if page.tagline %}<p class="sub" style="font-family:var(--font-head);font-weight:600;color:#fff;">{{ page.tagline | join(' ') }}</p>{% endif %}
+    {% if page.sub %}<p class="sub">{{ page.sub }}</p>{% endif %}
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="{{ root }}book-demo/">Book a Free Demo</a>
+      <a class="btn btn-outline" href="https://wa.me/6580116009">WhatsApp Us: +65 8011 6009</a>
+    </div>
+    {% if page.trust %}<div class="trust-line">{% for s in page.trust_items %}<span>{{ s }}</span>{% endfor %}</div>{% endif %}
+  </div>
+  <div class="hero-wave"><svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C240,62 480,0 720,20 C960,40 1200,56 1440,22 L1440,60 L0,60 Z" fill="{{ '#F5F8FC' if sections and sections[0].soft else '#FFFFFF' }}"/></svg></div>
+</section>
+
+{% for sec in sections %}
+<section class="section{{ ' section-soft' if sec.soft else '' }}">
+  {% if loop.index % 3 == 1 %}<div class="blob tl"></div><div class="ring tr"></div>{% elif loop.index % 3 == 2 %}<div class="blob navy br"></div>{% endif %}
+  <div class="container">
+    {% if sec.heading %}
+    <div class="section-head">
+      <h2>{{ sec.heading }}</h2>
+      {% if sec.lead %}<p class="lead">{{ sec.lead }}</p>{% endif %}
+    </div>
+    {% endif %}
+    {% for grp in sec.groups %}
+      {% if grp.type == 'quotes' %}
+      <div class="grid grid-{{ 3 if grp.cards|length >= 3 else grp.cards|length }}">
+        {% for q in grp.cards %}<div class="card quote-card"><blockquote>{{ q[0] }}</blockquote>{% if q[1] %}<p style="color:var(--text-soft);font-size:.94rem;margin:0;">{{ q[1] }}</p>{% endif %}</div>{% endfor %}
+      </div>
+      {% elif grp.type == 'pains' %}
+      <div class="grid grid-{{ 3 if grp.cards|length % 3 == 0 else 2 }}">
+        {% for c in grp.cards %}<div class="card pain-card"><h3>{{ c[0] }}</h3><p>{{ c[1] }}</p></div>{% endfor %}
+      </div>
+      {% elif grp.type == 'tiles' %}
+      <div class="grid grid-{{ 3 if grp.cards|length % 3 == 0 else 2 }}">
+        {% for c in grp.cards %}<div class="card tile"><h3><span class="ico">{{ icons[loop.index0 % icons|length] }}</span>{{ c[0] }}</h3><p>{{ c[1] }}</p></div>{% endfor %}
+      </div>
+      {% elif grp.type == 'outcomes' %}
+      <div class="grid grid-2">
+        {% for c in grp.cards %}<div class="card outcome-card"><h3>{{ c[0] }}</h3><p>{{ c[1] }}</p></div>{% endfor %}
+      </div>
+      {% elif grp.type == 'steps' %}
+      <div class="grid grid-2 steps">
+        {% for s in grp.cards %}<div class="step"><div class="num">{{ s[0] }}</div><h3>{{ s[1] }}</h3><p>{{ s[2] }}</p></div>{% endfor %}
+      </div>
+      {% elif grp.type == 'cards' %}
+      <div class="grid grid-{{ 3 if grp.cards|length % 3 == 0 and grp.cards|length > 2 else 2 }}">
+        {% for c in grp.cards %}<div class="card"><h3>{{ c[0] }}</h3><p style="color:var(--text-soft);font-size:.94rem;margin:0;">{{ c[1] }}</p></div>{% endfor %}
+      </div>
+      {% elif grp.type == 'cta' %}
+      <div class="hero-ctas" style="justify-content:center;margin-top:2.2rem;">
+        <a class="btn btn-primary" href="{{ root }}book-demo/">Book a Free Demo</a>
+        <a class="btn btn-outline-navy" href="https://wa.me/6580116009">WhatsApp Us: +65 8011 6009</a>
+      </div>
+      {% elif grp.type == 'para' %}
+      <p style="max-width:760px;margin:2rem auto 0;text-align:center;color:var(--text-soft);">{{ grp.text }}</p>
+      {% elif grp.type == 'logos' %}
+      <div class="logo-grid">
+        <img class="client-logo" src="{{ root }}assets/img/client-minipanjab.png" alt="Mini Panjab">
+        <img class="client-logo" src="{{ root }}assets/img/client-yoyar.png" alt="Yoyar">
+        <img class="client-logo" src="{{ root }}assets/img/client-wholesale.png" alt="Wholesale Club">
+        <img class="client-logo" src="{{ root }}assets/img/client-artistbarber.png" alt="Artist Barber">
+        <img class="client-logo" src="{{ root }}assets/img/client-shasha.png" alt="Sha Sha Beauty &amp; Bridal">
+        <span class="logo-chip">Raffles Medispa</span>
+        <span class="logo-chip">Murugan Barber Shop</span>
+        <span class="logo-chip">First Cut Salon</span>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+{% if page.faqs %}
+<section class="section{{ ' section-soft' if sections|length % 2 == 0 else '' }}">
+  <div class="container">
+    <div class="section-head center">
+      <h2>{{ faq_heading }}</h2>
+    </div>
+    <div class="faq">
+      {% for q, a in page.faqs %}<details><summary>{{ q }}</summary><div class="faq-a">{{ a }}</div></details>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-navy cta-band">
+  <div class="container">
+    <h2>{{ page.final.heading or 'See OrderZ running in your type of business.' }}</h2>
+    <p class="sub">{{ page.final.sub or 'Book a free 30-minute demo tailored to your operation. No commitment required.' }}</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="{{ root }}book-demo/">Book a Free Demo</a>
+      <a class="btn btn-outline" href="https://wa.me/6580116009">WhatsApp Us: +65 8011 6009</a>
+    </div>
+    {% if page.final.trust_items %}<div class="trust-line">{% for s in page.final.trust_items %}<span>{{ s }}</span>{% endfor %}</div>{% endif %}
+  </div>
+</section>
+
+{% endblock %}
