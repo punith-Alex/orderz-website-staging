@@ -52,6 +52,8 @@ jobs:
               h = h.replace(' — everything connected.', '. Everything connected.')
               h = h.replace('<span class="col-badge">POS Only</span>', '<span class="col-badge">POS</span>')
               h = h.replace('Start with billing only. Add modules anytime.', 'Start with billing. Add modules anytime.')
+              if 'Start with billing' not in h:
+                  h = h.replace('<span class="col-badge">POS</span>', '<span class="col-badge">POS</span><span class="col-expl">Start with billing. Add modules anytime.</span>')
               if h != orig:
                   f.write_text(h, encoding="utf-8")
                   n += 1
