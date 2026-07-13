@@ -27,6 +27,33 @@ jobs:
           mkdir -p _site
           unzip -o dist.zip -d _site
           printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
+      - name: Clarify menu column labels (no-op once baked into dist.zip)
+        run: |
+          python3 - <<'PY'
+          import re, pathlib
+          expl = ["POS + QR ordering + kitchen + reports — everything connected.",
+                  "POS + bookings + CRM + commissions — everything connected.",
+                  "POS + scheduling + client records + reports — everything connected.",
+                  "POS + inventory + loyalty + reports — everything connected."]
+          css = pathlib.Path("_site/assets/css/style.css")
+          t = css.read_text(encoding="utf-8")
+          if "col-expl" not in t:
+              css.write_text(t + "\n.col-expl{display:block;font-size:10.5px;color:#8a94a3;line-height:1.45;padding:0 .6rem .45rem;max-width:230px;}\n", encoding="utf-8")
+          n = 0
+          for f in pathlib.Path("_site").rglob("index.html"):
+              h = f.read_text(encoding="utf-8")
+              if "col-expl" in h: continue
+              c = [0]
+              def left(m):
+                  e = expl[c[0]] if c[0] < 4 else ""
+                  c[0] += 1
+                  return '<span class="col-badge">Complete System</span><span class="col-expl">' + e + '</span>'
+              h = re.sub(r'<span class="col-badge">Full Platform 360°</span>', left, h)
+              h = h.replace('<span class="col-badge">POS Only</span>', '<span class="col-badge">POS Only</span><span class="col-expl">Start with billing only. Add modules anytime.</span>')
+              f.write_text(h, encoding="utf-8")
+              n += 1
+          print("menu labels patched on", n, "pages")
+          PY
       - uses: actions/configure-pages@v5
         with:
           enablement: true
@@ -35,4 +62,3 @@ jobs:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-
